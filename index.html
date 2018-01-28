@@ -23,6 +23,7 @@
         <link rel="stylesheet" href="css/main.css">
         <!-- Responsive Stylesheet -->
         <link rel="stylesheet" href="css/responsive.css">
+        <script type="text/javascript" src="example-1.js"></script>
         <script src="http://js.leapmotion.com/leap-0.6.3.min.js"></script>
         <script>
         // Store frame for motion functions
@@ -285,6 +286,35 @@
                   href="http://www.apple.com/safari">Safari</a>, and <a
                   href="http://www.konqueror.org">Konqueror</a>.</p>
               </canvas>
+              <div id="main">
+                <button id="pause" onclick="togglePause()">Pause</button>
+
+                <div id="extended"></div>
+                <div style="clear:both;"></div>
+                <div id="pinchStrength"></div>
+                <div style="clear:both;"></div>
+
+                <div id="posDataX"></div>
+                <div style="clear:both;"></div>
+                <div id="posDataY"></div>
+                <div style="clear:both;"></div>
+                <div id="posDataZ"></div>
+                <div style="clear:both;"></div>
+                <div id="parsed"></div>
+                <div style="clear:both;"></div>
+
+                <h3>Frame data:</h3>
+                <div id="frameData"></div>
+                <div style="clear:both;"></div>
+                <h3>Hand data:</h3>
+                <div id="handData"></div>
+                <div style="clear:both;"></div>
+                <h3>Finger data:</h3>
+                <div id="pointableData"></div>
+                <div style="clear:both;"></div>
+
+                <script type="text/javascript" src="example-1.js"></script>
+              </div>
                 <!-- <div class="row">
                     <div class="col-md-7 col-sm-12 wow fadeInLeft">
                     	<div class="sub-heading">
