@@ -46,10 +46,11 @@ window.addEventListener('load', function () {
     //   y = ev.offsetY;
     // }
     strength = parseFloat(document.getElementById('pinchStrength').innerText);
+    extended = document.getElementById('extended').innerText;
     x = parseInt(document.getElementById('posDataX').innerText) * - 8;
     y = parseInt(document.getElementById('posDataY').innerText)* 8;
     z = parseInt(document.getElementById('posDataZ').innerText);
-    document.getElementById('parsed').innerHTML = "<h1>" + x + " " + y + " " + z + "</h1>";
+    document.getElementById('parsed').innerHTML = "<h1>" + x + " " + y + " " + z + " " + extended + "</h1>";
     // The event handler works like a drawing pencil which tracks the mouse
     // movements. We start drawing a path made up of lines.
   if (strength > 0.8){
