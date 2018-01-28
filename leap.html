@@ -12,6 +12,7 @@ var paused = false;
 
 // Setup Leap loop with frame callback function
 var controllerOptions = {};
+
 // to use HMD mode:
 // controllerOptions.optimizeHMD = true;
 
@@ -49,12 +50,6 @@ Leap.loop(controllerOptions, function(frame) {
       handString += "Arm center: " + vectorToString(hand.arm.center()) + "<br />";
       handString += "Arm up vector: " + vectorToString(hand.arm.basis[1]) + "<br />";
 
-      var pinchStrength = document.getElementById("pinchStrength");
-      pinchStrength.innerHTML = "<div style='width:250px; float:left; padding:5px'>"+ hand.pinchStrength.toString() + "</div>";
-      var posDataX = document.getElementById("posDataX");
-      posDataX.innerHTML = "<div style='width:250px; float:left; padding:5px'>"+ parseInt(hand.palmPosition[0]).toString() + "</div>";
-      var posDataY = document.getElementById("posDataY");
-      posDataY.innerHTML = "<div style='width:250px; float:left; padding:5px'>"+ parseInt(hand.palmPosition[2]).toString() + "</div>";
       // IDs of pointables associated with this hand
       if (hand.pointables.length > 0) {
         var fingerIds = [];
@@ -68,6 +63,13 @@ Leap.loop(controllerOptions, function(frame) {
       }
 
       handString += "</div>";
+
+      document.getElementById('posDataX').innerHTML = "<h1>" + parseInt(hand.palmPosition[0]) + "</h1>";
+      document.getElementById('posDataY').innerHTML = "<h1>" + parseInt(hand.palmPosition[2]) + "</h1>";
+      document.getElementById('posDataZ').innerHTML = "<h1>" + parseInt(hand.palmPosition[1]) + "</h1>";
+      document.getElementById('pinchStrength').innerHTML = "<h1>" + hand.pinchStrength + "</h1>";
+
+
     }
   }
   else {
@@ -81,7 +83,7 @@ Leap.loop(controllerOptions, function(frame) {
   if (frame.pointables.length > 0) {
     var fingerTypeMap = ["Thumb", "Index finger", "Middle finger", "Ring finger", "Pinky finger"];
     var boneTypeMap = ["Metacarpal", "Proximal phalanx", "Intermediate phalanx", "Distal phalanx"];
-    for (var i = 0; i < frame.pointables.length; i++){
+    for (var i = 0; i < frame.pointables.length; i++) {
       var pointable = frame.pointables[i];
 
       pointableString += "<div style='width:250px; float:left; padding:5px'>";
@@ -95,8 +97,17 @@ Leap.loop(controllerOptions, function(frame) {
         pointableString += "Width: "  + pointable.width.toFixed(1) + " mm<br />";
         pointableString += "Direction: " + vectorToString(pointable.direction, 2) + "<br />";
         pointableString += "Extended?: "  + pointable.extended + "<br />";
+        pointable.bones.forEach( function(bone){
+          pointableString += boneTypeMap[bone.type] + " bone <br />";
+          pointableString += "Center: " + vectorToString(bone.center()) + "<br />";
+          pointableString += "Direction: " + vectorToString(bone.direction()) + "<br />";
+          pointableString += "Up vector: " + vectorToString(bone.basis[1]) + "<br />";
+        });
         pointableString += "Tip position: " + vectorToString(pointable.tipPosition) + " mm<br />";
         pointableString += "</div>";
+      }
+      if (i == 1){
+        document.getElementById("extended").innerHTML = "<h1>" + pointable.extended + "</h1>";
       }
     }
   }
@@ -127,11 +138,14 @@ function togglePause() {
     document.getElementById("pause").innerText = "Pause";
   }
 }
+
 </script>
 </head>
 <body>
+
+<body>
   <div id="container">
-    <canvas id="imageView" width="400" height="300">
+    <canvas id="imageView" width="1800" height="1000">
       <p>Unfortunately, your browser is currently unsupported by our web
       application.  We are sorry for the inconvenience. Please use one of the
       supported browsers listed below, or draw the image you want using an
@@ -142,18 +156,23 @@ function togglePause() {
         href="http://www.konqueror.org">Konqueror</a>.</p>
     </canvas>
   </div>
-<h1>Leap Motion JavaScript Sample</h1>
 <div id="main">
   <button id="pause" onclick="togglePause()">Pause</button>
 
+  <div id="extended"></div>
+  <div style="clear:both;"></div>
   <div id="pinchStrength"></div>
   <div style="clear:both;"></div>
+
   <div id="posDataX"></div>
   <div style="clear:both;"></div>
   <div id="posDataY"></div>
   <div style="clear:both;"></div>
+  <div id="posDataZ"></div>
+  <div style="clear:both;"></div>
   <div id="parsed"></div>
   <div style="clear:both;"></div>
+
   <h3>Frame data:</h3>
   <div id="frameData"></div>
   <div style="clear:both;"></div>

@@ -31,10 +31,12 @@ window.addEventListener('load', function () {
     // Attach the mousemove event handler.
   }
   var started = false;
-  setInterval(function() {
+  setInterval(function(prevx, prevy) {
     // method to be executed;
     var x, y;
-
+    // var prevx, prevy;
+    // var diffx = x - prevx;
+    // var diffy = y - prevy;
     // // Get the mouse position relative to the canvas element.
     // if (ev.layerX || ev.layerX == 0) { // Firefox
     //   x = ev.layerX;
@@ -43,15 +45,18 @@ window.addEventListener('load', function () {
     //   x = ev.offsetX;
     //   y = ev.offsetY;
     // }
-    strength = document.getElementById('pinchStrength').innerText;
-    x = parseInt(document.getElementById('posDataX').innerText) - 100;
-    y = parseInt(document.getElementById('posDataY').innerText) * -1;
-    document.getElementById('parsed').innerHTML = "<h1>" + x + " " + y + +"</h1>";
+    strength = parseFloat(document.getElementById('pinchStrength').innerText);
+    x = parseInt(document.getElementById('posDataX').innerText) * - 8;
+    y = parseInt(document.getElementById('posDataY').innerText)* 8;
+    z = parseInt(document.getElementById('posDataZ').innerText);
+    document.getElementById('parsed').innerHTML = "<h1>" + x + " " + y + " " + z + "</h1>";
     // The event handler works like a drawing pencil which tracks the mouse
     // movements. We start drawing a path made up of lines.
-    if(strength > 0.8){
-      if (!started) {
+  if (strength > 0.8){
+    if (!started) {
+
         context.beginPath();
+        context.lineWidth="5";
         context.moveTo(x, y);
         started = true;
       } else {
@@ -59,7 +64,32 @@ window.addEventListener('load', function () {
         context.stroke();
       }
     }
-  }, 10);
+    else {
+      context.beginPath();
+      context.lineWidth="5";
+      context.moveTo(x,y);
+    }
+
+    //   if(extended == "false"){
+    //     context.beginPath();
+    //     context.moveTo(x, y);
+    //     started = true;
+    //   }
+    //
+    // if (z > 400) {
+    //   if (started) {
+    //     context.lineTo(x, y);
+    //     context.stroke();
+    //   }
+    // }
+    //
+    // if (extended == "true"){
+    //     if (started){
+    //       started = false;
+    //     }
+    //   }
+
+  }, 50);
   init();
 }, false); }
 
