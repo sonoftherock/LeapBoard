@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>Leap Motion JavaScript Sample</title>
+<script src="http://js.leapmotion.com/leap-0.6.3.min.js"></script>
+<script>
+// Store frame for motion functions
+var previousFrame = null;
+var paused = false;
+
+// Setup Leap loop with frame callback function
+var controllerOptions = {};
+// to use HMD mode:
+// controllerOptions.optimizeHMD = true;
+
+Leap.loop(controllerOptions, function(frame) {
+  if (paused) {
+    return; // Skip this update
+  }
+
+  // Display Frame object data
+  var frameOutput = document.getElementById("frameData");
+
+  var frameString = "Frame ID: " + frame.id  + "<br />"
+                  + "Timestamp: " + frame.timestamp + " &micro;s<br />"
+                  + "Hands: " + frame.hands.length + "<br />"
+                  + "Fingers: " + frame.fingers.length + "<br />";
+
+  frameOutput.innerHTML = "<div style='width:300px; float:left; padding:5px'>" + frameString + "</div>";
+
+  // Display Hand object data
+  var handOutput = document.getElementById("handData");
+  var handString = "";
+  if (frame.hands.length > 0) {
+    for (var i = 0; i < frame.hands.length; i++) {
+      var hand = frame.hands[i];
+
+      handString += "<div style='width:300px; float:left; padding:5px'>";
+      handString += "Hand ID: " + hand.id + "<br />";
+      handString += "Type: " + hand.type + " hand" + "<br />";
+      handString += "Direction: " + vectorToString(hand.direction, 2) + "<br />";
+      handString += "Palm position: " + vectorToString(hand.palmPosition) + " mm<br />";
+      handString += "Grab strength: " + hand.grabStrength + "<br />";
+      handString += "Pinch strength: " + hand.pinchStrength + "<br />";
+      handString += "Confidence: " + hand.confidence + "<br />";
+      handString += "Arm direction: " + vectorToString(hand.arm.direction()) + "<br />";
+      handString += "Arm center: " + vectorToString(hand.arm.center()) + "<br />";
+      handString += "Arm up vector: " + vectorToString(hand.arm.basis[1]) + "<br />";
+
+      var pinchStrength = document.getElementById("pinchStrength");
+      pinchStrength.innerHTML = "<div style='width:250px; float:left; padding:5px'>"+ hand.pinchStrength.toString() + "</div>";
+      var posDataX = document.getElementById("posDataX");
+      posDataX.innerHTML = "<div style='width:250px; float:left; padding:5px'>"+ parseInt(hand.palmPosition[0]).toString() + "</div>";
+      var posDataY = document.getElementById("posDataY");
+      posDataY.innerHTML = "<div style='width:250px; float:left; padding:5px'>"+ parseInt(hand.palmPosition[2]).toString() + "</div>";
+      // IDs of pointables associated with this hand
+      if (hand.pointables.length > 0) {
+        var fingerIds = [];
+        for (var j = 0; j < hand.pointables.length; j++) {
+          var pointable = hand.pointables[j];
+            fingerIds.push(pointable.id);
+        }
+        if (fingerIds.length > 0) {
+          handString += "Fingers IDs: " + fingerIds.join(", ") + "<br />";
+        }
+      }
+
+      handString += "</div>";
+    }
+  }
+  else {
+    handString += "No hands";
+  }
+  handOutput.innerHTML = handString;
+
+  // Display Pointable (finger) object data
+  var pointableOutput = document.getElementById("pointableData");
+  var pointableString = "";
+  if (frame.pointables.length > 0) {
+    var fingerTypeMap = ["Thumb", "Index finger", "Middle finger", "Ring finger", "Pinky finger"];
+    var boneTypeMap = ["Metacarpal", "Proximal phalanx", "Intermediate phalanx", "Distal phalanx"];
+    for (var i = 0; i < frame.pointables.length; i++){
+      var pointable = frame.pointables[i];
+
+      pointableString += "<div style='width:250px; float:left; padding:5px'>";
+
+      {
+        pointableString += "Pointable ID: " + pointable.id + "<br />";
+        pointableString += "Type: " + fingerTypeMap[pointable.type] + "<br />";
+        pointableString += "Belongs to hand with ID: " + pointable.handId + "<br />";
+        pointableString += "Classified as a finger<br />";
+        pointableString += "Length: " + pointable.length.toFixed(1) + " mm<br />";
+        pointableString += "Width: "  + pointable.width.toFixed(1) + " mm<br />";
+        pointableString += "Direction: " + vectorToString(pointable.direction, 2) + "<br />";
+        pointableString += "Extended?: "  + pointable.extended + "<br />";
+        pointableString += "Tip position: " + vectorToString(pointable.tipPosition) + " mm<br />";
+        pointableString += "</div>";
+      }
+    }
+  }
+  else {
+    pointableString += "<div>No pointables</div>";
+  }
+  pointableOutput.innerHTML = pointableString;
+
+  // Store frame for motion functions
+  previousFrame = frame;
+})
+
+function vectorToString(vector, digits) {
+  if (typeof digits === "undefined") {
+    digits = 1;
+  }
+  return "(" + vector[0].toFixed(digits) + ", "
+             + vector[1].toFixed(digits) + ", "
+             + vector[2].toFixed(digits) + ")";
+}
+
+function togglePause() {
+  paused = !paused;
+
+  if (paused) {
+    document.getElementById("pause").innerText = "Resume";
+  } else {
+    document.getElementById("pause").innerText = "Pause";
+  }
+}
+</script>
+</head>
+<body>
+  <div id="container">
+    <canvas id="imageView" width="400" height="300">
+      <p>Unfortunately, your browser is currently unsupported by our web
+      application.  We are sorry for the inconvenience. Please use one of the
+      supported browsers listed below, or draw the image you want using an
+      offline tool.</p>
+      <p>Supported browsers: <a href="http://www.opera.com">Opera</a>, <a
+        href="http://www.mozilla.com">Firefox</a>, <a
+        href="http://www.apple.com/safari">Safari</a>, and <a
+        href="http://www.konqueror.org">Konqueror</a>.</p>
+    </canvas>
+  </div>
+<h1>Leap Motion JavaScript Sample</h1>
+<div id="main">
+  <button id="pause" onclick="togglePause()">Pause</button>
+
+  <div id="pinchStrength"></div>
+  <div style="clear:both;"></div>
+  <div id="posDataX"></div>
+  <div style="clear:both;"></div>
+  <div id="posDataY"></div>
+  <div style="clear:both;"></div>
+  <div id="parsed"></div>
+  <div style="clear:both;"></div>
+  <h3>Frame data:</h3>
+  <div id="frameData"></div>
+  <div style="clear:both;"></div>
+  <h3>Hand data:</h3>
+  <div id="handData"></div>
+  <div style="clear:both;"></div>
+  <h3>Finger data:</h3>
+  <div id="pointableData"></div>
+  <div style="clear:both;"></div>
+
+  <script type="text/javascript" src="example-1.js"></script>
+</div>
+</body>
+</html>
