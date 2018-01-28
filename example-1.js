@@ -90,7 +90,7 @@ window.addEventListener('load', function () {
     //     }
     //   }
 
-  }, 50);
+  }, 10);
   init();
 }, false); }
 
